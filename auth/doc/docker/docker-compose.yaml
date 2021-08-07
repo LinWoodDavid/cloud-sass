@@ -1,0 +1,17 @@
+version: "3.1"
+
+services:
+  auth:
+    image: 192.168.15.1:5000/auth:1.0
+    container_name: auth
+    restart: always
+    #host模式
+    network_mode: "host"
+#    build:
+#      context: .
+    volumes:
+      - /data/logs/auth:/data/logs/auth
+      - /data/hostoryLogs/auth:/data/hostoryLogs/auth      
+    environment:
+      - server.port=6100
+      - spring.profiles.active=pro

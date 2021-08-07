@@ -1,0 +1,60 @@
+version: '2.2'
+services:
+  es-node01:
+    image: 192.168.15.1:5000/elk-elasticsearch-ik:$ELK_VERSION
+    container_name: es-node01
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./es-node01/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./es-node01/data:/usr/share/elasticsearch/data
+      - ./es-node01/logs:/usr/share/elasticsearch/logs
+      - ./es-node01/plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      elk:
+        aliases:
+          - elk-node01
+  kibana:
+    image: 192.168.15.1:5000/elk-kibana:$ELK_VERSION
+    container_name: kibana
+    restart: always
+    volumes:
+      - ./kibana/conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "5601:5601"
+    networks:
+      elk:
+        aliases:
+          - elk-kibana
+    depends_on:
+      - es-node01
+  logstash:
+    image: 192.168.15.1:5000/elk-logstash:$ELK_VERSION
+    container_name: logstash
+    hostname: logstash
+    restart: always
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    ports:
+      - 9600:9600
+      - 5044:5044
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    networks:
+      elk:
+        aliases:
+          - elk-logstash
+    depends_on:
+      - es-node01
+networks:
+  elk:
+    driver: bridge

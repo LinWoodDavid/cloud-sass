@@ -1,0 +1,9 @@
+# 服务端口
+server.port: 5601
+# 服务IP
+server.host: "0.0.0.0"
+# ES
+elasticsearch.hosts: [ "http://172.16.52.80:9200","http://172.16.52.81:9200" ]
+# 汉化
+i18n.locale: "zh-CN"
+

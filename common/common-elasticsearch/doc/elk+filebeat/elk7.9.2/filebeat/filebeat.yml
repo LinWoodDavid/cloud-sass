@@ -1,0 +1,20 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.inputs:
+- type: log
+  paths:
+#    - /logs/*/*.log    
+    - /logs/rocketmq/rocketmq-console.log
+  fields:
+    appname: rocketmq-console
+
+output.logstash:
+  hosts: ["logstash:5044"]
+#  hosts: ["172.16.52.81:5044"]
+#  hosts: ["47.114.137.37:5045"]
+
+setup.kibana:
+  host: "kibana:5601"

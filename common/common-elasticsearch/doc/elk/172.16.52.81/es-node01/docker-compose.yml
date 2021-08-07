@@ -1,0 +1,23 @@
+version: '2.2'
+services:
+  es-node01:
+    image: 192.168.15.1:5000/elk-elasticsearch-ik:$ELK_VERSION
+    container_name: es-node01
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"      
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml      
+      - ./data:/usr/share/elasticsearch/data
+      - ./logs:/usr/share/elasticsearch/logs
+      - ./plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - 9200:9200     
+      - 9300:9300 
+    networks:
+      - elasticsearch
+networks:
+  elasticsearch:

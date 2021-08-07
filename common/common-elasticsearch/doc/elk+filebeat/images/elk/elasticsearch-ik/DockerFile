@@ -1,0 +1,2 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+ADD elasticsearch-analysis-ik /usr/share/elasticsearch/plugins/elasticsearch-analysis-ik

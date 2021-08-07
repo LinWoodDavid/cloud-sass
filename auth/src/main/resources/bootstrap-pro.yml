@@ -1,0 +1,43 @@
+server:
+  port: 6100
+spring:
+  profiles: pro
+  application:
+    name: auth
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.114.137.37:3306/account?characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+  redis:
+    database: 2
+    host: 47.114.137.37
+    port: 6379
+    password: 123456
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+    timeout: 100ms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.114.171.81:8848
+      config:
+        enabled: false
+management:
+  endpoint:
+    health:
+      enabled: true
+log:
+  hostoryPath: /data/hostoryLogs
+  path: /data/logs
+logging:
+  config: classpath:logback-spring.xml
+feign:
+  server:
+    name:
+      scoring-server: scoring-server
+      scoring-application: scoring-application
+      auth: auth

@@ -1,0 +1,16 @@
+version: '2.2'
+services:
+  kibana:
+    image: 192.168.15.1:5000/elk-kibana:$ELK_VERSION
+    container_name: kibana
+    restart: always
+    volumes:
+      - ./conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "5601:5601"
+    networks:
+      - kibana   
+networks:
+  kibana:    
+

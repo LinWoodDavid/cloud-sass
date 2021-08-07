@@ -1,0 +1,95 @@
+version: '2.2'
+services:
+  # elasticsearch  
+  elasticsearch:
+    image: 192.168.15.1:5000/elk-elasticsearch-ik:$ELK_VERSION
+    container_name: elasticsearch
+    restart: always
+    environment: 
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml    
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - 9200:9200     
+      - 9300:9300 
+    networks:
+      elk:
+        aliases:
+          - elasticsearch
+  # kibana
+  kibana:
+    image: 192.168.15.1:5000/elk-kibana:$ELK_VERSION
+    hostname: kibana
+    container_name: kibana
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      # - "elasticsearch.hosts=http://47.114.137.37:9200" #设置访问elasticsearch的地址    
+    volumes:
+      - ./kibana/conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - /etc/localtime:/etc/localtime
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch      
+    networks:
+      elk:
+        aliases:
+          - kibana
+    depends_on:
+      - elasticsearch
+  #Logstash
+  logstash:    
+    image: 192.168.15.1:5000/elk-logstash:$ELK_VERSION
+    container_name: logstash
+    hostname: logstash
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"   
+    volumes:
+      - ./logstash/config:/usr/share/logstash/config     # logstash 配置文件目录
+      - ./logstash/pipeline:/usr/share/logstash/pipeline # logstash 的采集与输入的配置文件目录             
+    ports:
+      - 9600:9600
+      - 5044:5044    
+      - 5045:5045 
+    links:
+      - elasticsearch      
+    networks:
+      elk:
+        aliases:
+          - logstash
+    depends_on:
+      - elasticsearch
+
+  # FileBeat
+  filebeat:
+    image: 192.168.15.1:5000/filebeat:$ELK_VERSION
+    hostname: filebeat
+    container_name: filebeat
+    restart: always
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./filebeat/logs:/usr/share/filebeat/logs      
+      - /data/logs:/logs      
+    environment:
+      - TZ=Asia/Shanghai
+    links:
+      - logstash # 把logstash的ip记录到该容器中
+    networks:
+      elk:
+        aliases:
+          - filebeat
+
+networks: 
+  elk:
+    driver: bridge

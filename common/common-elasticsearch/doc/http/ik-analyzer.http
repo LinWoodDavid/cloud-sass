@@ -1,0 +1,28 @@
+###1. 测试使用默认分词器
+POST http://47.114.171.81:9200/_analyze
+Content-Type: application/json
+
+{
+  "analyzer": "chinese",
+  "text": "今天是个好日子"
+}
+
+###2. 测试使用ik分词器ik_smart
+POST http://47.114.171.81:9200/_analyze
+Content-Type: application/json
+
+{
+    "analyzer": "ik_smart",
+    "text": "今天是个好日子"
+}
+
+###3. 测试使用ik分词器ik_max_word
+POST http://47.114.171.81:9200/_analyze
+Content-Type: application/json
+
+{
+    "analyzer": "ik_max_word",
+    "text": "今天是个好日子"
+}
+
+###

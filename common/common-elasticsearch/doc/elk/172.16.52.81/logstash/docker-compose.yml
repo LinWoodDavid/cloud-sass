@@ -1,0 +1,19 @@
+version: '2.2'
+services:
+  logstash:
+    image: 192.168.15.1:5000/elk-logstash:$ELK_VERSION
+    container_name: logstash
+    hostname: logstash
+    restart: always
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"    
+    ports:
+      - 9600:9600
+      - 5044:5044      
+    networks:
+      - logstash      
+    volumes:
+      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./pipeline:/usr/share/logstash/pipeline
+networks:
+  logstash:
