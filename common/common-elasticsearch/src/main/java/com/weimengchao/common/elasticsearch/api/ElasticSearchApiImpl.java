@@ -5,14 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -170,7 +174,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
             request.routing(routing);
         }
         request.source(documentJson, XContentType.JSON);
-        restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        if (!RestStatus.OK.equals(response.status())) {
+            log.error("response:{}", response);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
@@ -202,7 +210,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //执行批量操作
-        restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        if (bulkResponse.hasFailures()) {
+            log.error("bulkResponse:{}", bulkResponse);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
@@ -233,7 +245,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //同步执行
-        restHighLevelClient.update(request, RequestOptions.DEFAULT);
+        UpdateResponse response = restHighLevelClient.update(request, RequestOptions.DEFAULT);
+        if (!RestStatus.OK.equals(response.status())) {
+            log.error("response:{}", response);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     @Override
@@ -257,7 +273,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //同步执行
-        restHighLevelClient.update(request, RequestOptions.DEFAULT);
+        UpdateResponse response = restHighLevelClient.update(request, RequestOptions.DEFAULT);
+        if (!RestStatus.OK.equals(response.status())) {
+            log.error("response:{}", response);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
@@ -292,7 +312,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //执行批量操作
-        restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        if (bulkResponse.hasFailures()) {
+            log.error("bulkResponse:{}", bulkResponse);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     @Override
@@ -321,7 +345,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //执行批量操作
-        restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        if (bulkResponse.hasFailures()) {
+            log.error("bulkResponse:{}", bulkResponse);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
@@ -348,7 +376,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
             deleteRequest.setRefreshPolicy("true");
         }
 
-        restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        DeleteResponse response = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        if (!RestStatus.OK.equals(response.status())) {
+            log.error("response:{}", response);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
@@ -379,7 +411,11 @@ public class ElasticSearchApiImpl implements ElasticSearchApi {
         }
 
         //执行批量操作
-        restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        if (bulkResponse.hasFailures()) {
+            log.error("bulkResponse:{}", bulkResponse);
+            throw new RuntimeException("ElasticSearch请求失败");
+        }
     }
 
     /**
